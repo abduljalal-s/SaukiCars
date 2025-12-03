@@ -23,7 +23,7 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-
+        
         {/* Animated grid overlay */}
         <div className="absolute inset-0 z-10 opacity-10">
           <div className="absolute inset-0" style={{

@@ -25,7 +25,7 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 cursor-pointer group">
-            
+          
             <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
               SaukiCARS
             </span>
@@ -74,11 +74,7 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-red-600 to-orange-500 px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-red-500/50 transition-all">
-                Get Started
-              </button>
-            </Link>
+         
           </div>
         </div>
       )}

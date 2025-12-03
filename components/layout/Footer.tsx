@@ -47,43 +47,14 @@ export default function Navbar() {
             ))}
             <Link href="/contact">
               <button className="bg-gradient-to-r from-red-600 to-orange-500 px-6 py-2 rounded-full hover:shadow-lg hover:shadow-red-500/50 transition-all transform hover:scale-105">
-                Get Started
+                Contact Us
               </button>
             </Link>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-white p-2"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-black/98 backdrop-blur-lg">
-          <div className="px-4 pt-2 pb-6 space-y-3">
-            {navItems.map((item: NavItem) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-900 rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/contact">
-              <button className="w-full bg-gradient-to-r from-red-600 to-orange-500 px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-red-500/50 transition-all">
-                Get Started
-              </button>
-            </Link>
-          </div>
-        </div>
-      )}
+
     </nav>
   );
 }
