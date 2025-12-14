@@ -1,8 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 // components/sections/CarCard.tsx
 'use client';
 
+import { useCart } from '@/contexts/CartContext';
 import { Car } from '@/types';
+import { Heart } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -11,6 +12,18 @@ interface CarCardProps {
 }
 
 export default function CarCard({ car }: CarCardProps) {
+  const { addToCart, removeFromCart, isInCart } = useCart();
+  const inCart = isInCart(car.id);
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (inCart) {
+      removeFromCart(car.id);
+    } else {
+      addToCart(car);
+    }
+  };
+
   return (
     <div className="group bg-gray-900 rounded-2xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 border border-gray-800 hover:border-red-500/50">
       <div className="relative h-64 overflow-hidden">
@@ -20,10 +33,22 @@ export default function CarCard({ car }: CarCardProps) {
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         {car.featured && (
-          <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+          <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
             Featured
           </div>
         )}
+        
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavoriteClick}
+          className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm p-2 rounded-full hover:bg-black/80 transition-all"
+        >
+          <Heart
+            className={`w-6 h-6 transition-all ${
+              inCart ? 'fill-red-500 text-red-500' : 'text-white'
+            }`}
+          />
+        </button>
       </div>
       <div className="p-6">
         <h3 className="text-2xl font-bold mb-2 group-hover:text-red-500 transition-colors">

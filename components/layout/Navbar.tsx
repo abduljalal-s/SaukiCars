@@ -1,15 +1,17 @@
 // components/layout/Navbar.tsx
 'use client';
 
+import { useCart } from '@/contexts/CartContext';
 import { navItems } from '@/lib/data';
 import { NavItem } from '@/types';
-import { Car, Menu, X } from 'lucide-react';
+import { Car, Heart, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,9 +27,11 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 cursor-pointer group">
-          
+            <div className="bg-gradient-to-r from-red-600 to-orange-500 p-2 rounded-lg transform group-hover:scale-110 transition-transform">
+              <Car className="w-6 h-6" />
+            </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-500 bg-clip-text text-transparent">
-              SaukiCARS
+              SaukiCars
             </span>
           </Link>
 
@@ -43,6 +47,19 @@ export default function Navbar() {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-red-600 to-orange-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
+            
+            {/* Favorites/Cart Icon */}
+            <Link href="/favorites" className="relative">
+              <div className="p-2 hover:bg-gray-800 rounded-full transition-colors">
+                <Heart className="w-6 h-6 text-gray-300 hover:text-red-500 transition-colors" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+            </Link>
+
             <Link href="/contact">
               <button className="bg-gradient-to-r from-red-600 to-orange-500 px-6 py-2 rounded-full hover:shadow-lg hover:shadow-red-500/50 transition-all transform hover:scale-105">
                 Get Started
@@ -51,12 +68,22 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-white p-2"
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="md:hidden flex items-center gap-4">
+            <Link href="/favorites" className="relative">
+              <Heart className="w-6 h-6 text-gray-300" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-white p-2"
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -74,7 +101,16 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
-         
+            <Link href="/favorites" onClick={() => setIsMenuOpen(false)}>
+              <div className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-900 rounded-lg transition-colors">
+                Favorites ({cartCount})
+              </div>
+            </Link>
+            <Link href="/contact">
+              <button className="w-full bg-gradient-to-r from-red-600 to-orange-500 px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-red-500/50 transition-all">
+                Get Started
+              </button>
+            </Link>
           </div>
         </div>
       )}

@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
 // app/contact/page.tsx
 'use client';
 
@@ -7,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import { Clock, Mail, MapPin, Phone, Send } from 'lucide-react';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -17,14 +16,40 @@ export default function ContactPage() {
     message: ''
   });
 
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Message sent successfully! We\'ll get back to you soon.');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        toast.error(data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -120,17 +145,11 @@ export default function ContactPage() {
             <div className="lg:col-span-2">
               <div className="bg-gray-900 p-8 rounded-2xl border border-gray-800">
                 <h2 className="text-3xl font-bold mb-6">Send Us a Message</h2>
-                
-                {submitted && (
-                  <div className="mb-6 p-4 bg-green-500/20 border border-green-500 rounded-lg text-green-500">
-                    Thank you! Your message has been sent successfully.
-                  </div>
-                )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-semibold mb-2">Full Name</label>
+                      <label className="block text-sm font-semibold mb-2">Full Name *</label>
                       <input
                         type="text"
                         name="name"
@@ -143,7 +162,7 @@ export default function ContactPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold mb-2">Email</label>
+                      <label className="block text-sm font-semibold mb-2">Email *</label>
                       <input
                         type="email"
                         name="email"
@@ -168,9 +187,9 @@ export default function ContactPage() {
                         placeholder="+1 (555) 123-4567"
                       />
                     </div>
-                    
+
                     <div>
-                      <label className="block text-sm font-semibold mb-2">Subject</label>
+                      <label className="block text-sm font-semibold mb-2">Subject *</label>
                       <select
                         name="subject"
                         value={formData.subject}
@@ -189,7 +208,7 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Message</label>
+                    <label className="block text-sm font-semibold mb-2">Message *</label>
                     <textarea
                       name="message"
                       value={formData.message}
@@ -203,10 +222,11 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-red-600 to-orange-500 py-4 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/50 transition-all flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-red-600 to-orange-500 py-4 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/50 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="w-5 h-5" />
-                    <span>Send Message</span>
+                    <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
                   </button>
                 </form>
               </div>

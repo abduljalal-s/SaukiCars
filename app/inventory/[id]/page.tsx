@@ -3,8 +3,9 @@
 
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
+import { useCart } from '@/contexts/CartContext';
 import { featuredCars } from '@/lib/data';
-import { ArrowLeft, Calendar, Check, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, Calendar, Check, Heart, Mail, Phone } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -12,24 +13,41 @@ export default function CarDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'contact'>('overview');
-
+  
+  // Cart/Favorites functionality
+  const { addToCart, removeFromCart, isInCart } = useCart();
+  
   const car = featuredCars.find((c) => c.id === Number(params.id));
 
   if (!car) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Vehicle Not Found</h1>
-          <button
-            onClick={() => router.push('/inventory')}
-            className="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-500 rounded-lg font-semibold"
-          >
-            Back to Inventory
-          </button>
+      <div className="min-h-screen bg-black text-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">Vehicle Not Found</h1>
+            <button
+              onClick={() => router.push('/inventory')}
+              className="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-500 rounded-lg font-semibold"
+            >
+              Back to Inventory
+            </button>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
+
+  const inCart = isInCart(car.id);
+
+  const handleFavoriteClick = () => {
+    if (inCart) {
+      removeFromCart(car.id);
+    } else {
+      addToCart(car);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -146,7 +164,6 @@ export default function CarDetailPage() {
                     </p>
                     
                     <div className="space-y-4">
-                      
                       <a
                         href="tel:+15551234567"
                         className="flex items-center gap-4 bg-gray-900 p-4 rounded-lg hover:bg-gray-800 transition-colors"
@@ -158,7 +175,6 @@ export default function CarDetailPage() {
                         </div>
                       </a>
 
-                      
                       <a
                         href="mailto:info@autoelite.com"
                         className="flex items-center gap-4 bg-gray-900 p-4 rounded-lg hover:bg-gray-800 transition-colors"
@@ -184,8 +200,16 @@ export default function CarDetailPage() {
                 <button className="flex-1 bg-gradient-to-r from-red-600 to-orange-500 py-4 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/50 transition-all">
                   Make an Offer
                 </button>
-                <button className="flex-1 border-2 border-red-500 py-4 rounded-lg font-semibold hover:bg-red-500 transition-all">
-                  Save Vehicle
+                <button
+                  onClick={handleFavoriteClick}
+                  className={`flex-1 border-2 py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
+                    inCart
+                      ? 'border-red-500 bg-red-500 text-white'
+                      : 'border-red-500 hover:bg-red-500'
+                  }`}
+                >
+                  <Heart className={`w-5 h-5 ${inCart ? 'fill-current' : ''}`} />
+                  {inCart ? 'Saved' : 'Save Vehicle'}
                 </button>
               </div>
             </div>
