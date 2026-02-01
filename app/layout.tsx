@@ -6,25 +6,25 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: "AutoElite - Premium Car Sales",
-  description: "Find your dream car with AutoElite",
+	title: "Sauki Cars",
+	description:
+		"Find your dream car with SaukiCars Kaduna - Quality vehicles at",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <CartProvider>
-          {children}
-          <Toaster />
-        </CartProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang='en'>
+			<body className={inter.className}>
+				<CartProvider>
+					{children}
+					<Toaster />
+				</CartProvider>
+			</body>
+		</html>
+	);
 }
